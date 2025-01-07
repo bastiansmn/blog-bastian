@@ -48,9 +48,11 @@ jobs:
         uses: azure/setup-helm@v3
         with:
           version: 'latest'
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Deploy with Helm
         run: |
+          cat $PWD/kubeconfig.yaml
           helm upgrade --install $CHART_NAME infra \
             --namespace $KUBE_NAMESPACE \
             --create-namespace
