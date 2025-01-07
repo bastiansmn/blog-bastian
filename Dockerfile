@@ -1,10 +1,6 @@
-FROM node:23 as builder
+FROM hugomods/hugo:exts AS builder
 
 WORKDIR /app
-
-COPY package.json package-lock.json ./
-
-RUN npm install
 
 COPY . .
 
