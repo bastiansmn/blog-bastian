@@ -15,7 +15,7 @@ image:
 
 # This is for the secretes for pulling an image from a private repository more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
 imagePullSecrets: 
-- image-pull-secret
+- name: image-pull-secret
 # This is to override the chart name.
 nameOverride: ""
 fullnameOverride: ""
@@ -23,9 +23,9 @@ fullnameOverride: ""
 # This section builds out the service account more information can be found here: https://kubernetes.io/docs/concepts/security/service-accounts/
 serviceAccount:
   # Specifies whether a service account should be created
-  create: true
+  create: false
   # Automatically mount a ServiceAccount's API credentials?
-  automount: true
+  automount: false
   # Annotations to add to the service account
   annotations: {}
   # The name of the service account to use.
@@ -62,10 +62,9 @@ service:
 # This block is for setting up the ingress for more information can be found here: https://kubernetes.io/docs/concepts/services-networking/ingress/
 ingress:
   enabled: true
-  className: ""
-  annotations: {}
-    # kubernetes.io/ingress.class: nginx
-    # kubernetes.io/tls-acme: "true"
+  className: nginx
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt
   hosts:
     - host: blog.bastian-somon.fr
       paths:
@@ -119,7 +118,7 @@ volumes:
 # Additional volumeMounts on the output Deployment definition.
 volumeMounts:
 - name: tmp
-  mountPath: /tmp
+  mountPath: /opt/bitnami/nginx/tmp
 # - name: foo
 #   mountPath: "/etc/foo"
 #   readOnly: true

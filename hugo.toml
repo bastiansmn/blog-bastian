@@ -19,6 +19,7 @@ defaultContentLanguage = 'fr'
 defaultContentLanguageInSubdir = false
 
 enableEmoji = true
+enableRobotsTXT = true
 
 ########################### Services #############################
 # [services]

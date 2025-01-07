@@ -6,6 +6,7 @@
   content="width=device-width, initial-scale=1, maximum-scale=5" />
 
 <title>{{ if .IsHome }}Bastian SOMON - Blog{{ else }}Bastian SOMON - {{ .Title }}{{ end }}</title>
+<meta name="description" content="{{ if .IsHome }}Découvrez le blog de Bastian SOMON.{{ else }}{{ .Summary }}{{ end }}">
 
 <!-- theme meta -->
 <meta name="theme-name" content="hugoplate" />
