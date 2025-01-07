@@ -1,9 +1,9 @@
 {
-  "name": "hugoplate",
-  "description": "hugo tailwindcss boilerplate",
-  "version": "1.18.1",
+  "name": "blog-bastian-somon",
+  "description": "blog bastian somon hugo",
+  "version": "0.0.0",
   "license": "MIT",
-  "author": "zeon.studio",
+  "author": "bastian.somon@gmail.com",
   "scripts": {
     "dev": "hugo server",
     "build": "hugo --gc --minify --templateMetrics --templateMetricsHints --forceSyncStatic",

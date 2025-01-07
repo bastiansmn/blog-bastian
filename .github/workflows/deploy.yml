@@ -1,0 +1,74 @@
+name: Deploy Hugo Blog to Kubernetes
+
+on:
+  push:
+    branches:
+      - main # Déclencher lors des pushes sur la branche main
+
+jobs:
+  build-and-deploy:
+    name: Build and Deploy to Kubernetes
+    runs-on: ubuntu-latest
+
+    env:
+      IMAGE_NAME: registry.bastian-somon.fr/blog # Remplace <username> par ton utilisateur GitHub ou Docker Hub
+      KUBE_NAMESPACE: blog # Nom de l'espace Kubernetes
+      CHART_NAME: blog
+
+    steps:
+      # Étape 1 : Vérifier le code source
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Étape 2 : Installer Hugo
+      - name: Setup Hugo
+        uses: peaceiris/actions-hugo@v2
+        with:
+          hugo-version: 'latest'
+
+      # Étape 3 : Construire le site Hugo
+      - name: Build Hugo Site
+        run: hugo --minify
+
+      # Étape 4 : Configurer Docker
+      - name: Log in to Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: registry.bastian-somon.fr
+          username: ${{ secrets.DOCKER_REGISTRY_USERNAME }}
+          password: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
+
+      # Étape 5 : Construire l'image Docker
+      - name: Build Docker Image
+        run: |
+          docker build -t $IMAGE_NAME:latest .
+
+      # Étape 6 : Pousser l'image Docker sur le registre
+      - name: Push Docker Image
+        run: |
+          docker push $IMAGE_NAME:latest
+
+      # Étape 7 : Configurer Kubectl
+      - name: Set up Kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: 'latest'
+
+      # Étape 8 : Configurer le cluster Kubernetes
+      - name: Authenticate to Kubernetes Cluster
+        run: |
+          echo "${{ secrets.KUBECONFIG }}" | base64 -d > kubeconfig.yaml
+          export KUBECONFIG=$PWD/kubeconfig.yaml
+
+      # Étape 9 : Installer Helm
+      - name: Install Helm
+        uses: azure/setup-helm@v3
+        with:
+          version: 'latest'
+
+      # Étape 10 : Déployer avec Helm
+      - name: Deploy with Helm
+        run: |
+          helm upgrade --install $CHART_NAME infra \
+            --namespace $KUBE_NAMESPACE \
+            --create-namespace
