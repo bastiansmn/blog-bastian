@@ -33,26 +33,3 @@ jobs:
       - name: Push Docker Image
         run: |
           docker push $IMAGE_NAME:latest
-
-      - name: Set up Kubectl
-        uses: azure/setup-kubectl@v3
-        with:
-          version: 'latest'
-
-      - name: Authenticate to Kubernetes Cluster
-        run: |
-          echo "${{ secrets.KUBECONFIG }}" | base64 -d > kubeconfig.yaml
-          export KUBECONFIG=$PWD/kubeconfig.yaml
-
-      - name: Install Helm
-        uses: azure/setup-helm@v3
-        with:
-          version: 'latest'
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Deploy with Helm
-        run: |
-          cat $PWD/kubeconfig.yaml
-          helm upgrade --install $CHART_NAME infra \
-            --namespace $KUBE_NAMESPACE \
-            --create-namespace
